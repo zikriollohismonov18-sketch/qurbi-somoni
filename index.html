@@ -1,116 +1,150 @@
 <!doctype html>
 <html lang="tg">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Қурби сомонӣ</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Қурби евро ба сомонӣ</title>
+  <style>
+    * { box-sizing: border-box; }
 
-<style>
-  * { box-sizing: border-box; }
-
-  body {
-    margin: 0;
-    min-height: 100svh;
-    display: grid;
-    place-items: center;
-    padding: 20px;
-    background: #edf5f2;
-    color: #12352b;
-    font: 16px system-ui, sans-serif;
-  }
-
-  main {
-    width: min(100%, 420px);
-    padding: 28px;
-    background: white;
-    border-radius: 24px;
-    box-shadow: 0 16px 48px #12352b17;
-  }
-
-  h1 { margin: 0; font-size: 1.3rem; }
-
-  output {
-    display: block;
-    margin: 24px 0;
-    padding: 18px 12px;
-    border-radius: 14px;
-    background: #e8f6ef;
-    text-align: center;
-    font-size: clamp(1.2rem, 5vw, 1.8rem);
-    font-weight: 700;
-    overflow-wrap: anywhere;
-  }
-
-  label, input, button { display: block; width: 100%; }
-
-  input, button {
-    margin-top: 10px;
-    padding: 12px;
-    border-radius: 10px;
-    font: inherit;
-  }
-
-  input { border: 1px solid #74988a; }
-
-  button {
-    border: 0;
-    background: #135d45;
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  #status { min-height: 1.4em; margin-bottom: 0; }
-</style>
-
-<main>
-  <h1>Қурби евро ба сомонӣ</h1>
-  <output id="quote" aria-live="polite">1 EUR = — TJS</output>
-
-  <form id="editor">
-    <label for="rate">Қурби 1 евро бо сомонӣ</label>
-    <input id="rate" inputmode="decimal" placeholder="Масалан, 11,50" required>
-    <button type="submit">Сабт кардан</button>
-  </form>
-
-  <p id="status" role="status"></p>
-</main>
-
-<script>
-  const key = 'manual-eur-tjs';
-  const rate = document.querySelector('#rate');
-  const quote = document.querySelector('#quote');
-  const status = document.querySelector('#status');
-
-  function show(value) {
-    quote.textContent = '1 EUR = ' + value.replace('.', ',') + ' TJS';
-  }
-
-  try {
-    const saved = localStorage.getItem(key);
-    if (saved) {
-      rate.value = saved.replace('.', ',');
-      show(saved);
-    }
-  } catch {}
-
-  document.querySelector('#editor').addEventListener('submit', event => {
-    event.preventDefault();
-
-    const value = rate.value.trim().replace(',', '.');
-
-    if (!/^\d{1,8}(\.\d{1,6})?$/.test(value) || Number(value) <= 0) {
-      status.textContent = 'Қурби мусбат ворид кун, масалан 11,50.';
-      return;
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: #edf5f2;
+      color: #12352b;
+      font: 16px system-ui, sans-serif;
     }
 
-    show(value);
+    main {
+      width: min(100%, 440px);
+      padding: 24px;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 16px 48px #12352b17;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    h2 { margin: 0 0 8px; font-size: 1rem; }
+    .route { margin: 0 0 20px; }
+
+    section {
+      margin-bottom: 14px;
+      padding: 16px;
+      border-radius: 14px;
+      background: #e8f6ef;
+    }
+
+    .rate {
+      display: block;
+      margin: 0;
+      font-size: clamp(1.1rem, 5vw, 1.6rem);
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .note { margin: 8px 0; font-size: 0.9rem; }
+    a { color: #135d45; }
+
+    label, input, button { display: block; width: 100%; }
+
+    input, button {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      font: inherit;
+    }
+
+    input { border: 1px solid #74988a; }
+
+    button {
+      border: 0;
+      background: #135d45;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #status { min-height: 1.4em; margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Қурби евро ба сомонӣ</h1>
+    <p class="route">Олмон → Тоҷикистон</p>
+
+    <section aria-labelledby="my-title">
+      <h2 id="my-title">Қурби ман</h2>
+      <output id="my-quote" class="rate" for="rate">1 EUR = — TJS</output>
+    </section>
+
+    <section aria-labelledby="paysend-title">
+      <h2 id="paysend-title">Қурби Paysend</h2>
+      <p id="paysend-quote" class="rate">1 EUR = — TJS</p>
+      <p class="note">Ин рақам дастӣ нав карда мешавад.</p>
+      <a href="https://paysend.com/en-en/send-money/from-germany-to-tajikistan"
+         target="_blank" rel="noopener noreferrer">
+        Дидани қурби ҷорӣ дар Paysend
+      </a>
+    </section>
+
+    <form id="editor">
+      <label for="rate">Қурби 1 евро бо сомонӣ</label>
+      <input id="rate" inputmode="decimal" placeholder="Масалан, 11,50" required>
+      <button type="submit">Сабт кардан</button>
+    </form>
+    <p id="status" role="status"></p>
+  </main>
+
+  <script>
+    // Қурби Paysend-ро байни нохунакҳо гузор.
+    const paysendRate = '';
+
+    const storageKey = 'manual-eur-tjs';
+    const rateInput = document.querySelector('#rate');
+    const myQuote = document.querySelector('#my-quote');
+    const paysendQuote = document.querySelector('#paysend-quote');
+    const status = document.querySelector('#status');
+
+    function formatQuote(value) {
+      return '1 EUR = ' + value.replace('.', ',') + ' TJS';
+    }
+
+    if (paysendRate.trim()) {
+      paysendQuote.textContent = formatQuote(paysendRate.trim());
+    }
 
     try {
-      localStorage.setItem(key, value);
-      status.textContent = 'Қурб сабт шуд.';
+      const savedRate = localStorage.getItem(storageKey);
+      if (savedRate) {
+        rateInput.value = savedRate.replace('.', ',');
+        myQuote.textContent = formatQuote(savedRate);
+      }
     } catch {
-      status.textContent = 'Қурб нишон дода шуд. Браузер сабтро иҷозат надод.';
+      // Агар браузер сабтро маҳдуд кунад, саҳифа боз ҳам кушода мешавад.
     }
-  });
-</script>
-</html># qurbi-somoni
+
+    document.querySelector('#editor').addEventListener('submit', event => {
+      event.preventDefault();
+
+      const value = rateInput.value.trim().replace(',', '.');
+
+      if (!/^\d{1,8}(\.\d{1,6})?$/.test(value) || Number(value) <= 0) {
+        status.textContent = 'Қурби мусбат ворид кун, масалан 11,50.';
+        return;
+      }
+
+      myQuote.textContent = formatQuote(value);
+
+      try {
+        localStorage.setItem(storageKey, value);
+        status.textContent = 'Қурб дар ҳамин браузер сабт шуд.';
+      } catch {
+        status.textContent = 'Қурб нишон дода шуд. Браузер сабтро иҷозат надод.';
+      }
+    });
+  </script>
+</body>
+</html>
